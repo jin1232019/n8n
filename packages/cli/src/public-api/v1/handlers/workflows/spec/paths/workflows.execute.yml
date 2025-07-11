@@ -1,0 +1,160 @@
+post:
+  x-eov-operation-id: executeWorkflow
+  x-eov-operation-handler: v1/handlers/workflows/workflow-execute.handler
+  tags:
+    - Workflow
+  summary: Execute a workflow with provided configuration
+  description: Execute a workflow directly using the provided workflow configuration without saving to database.
+  requestBody:
+    description: Workflow execution configuration
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - workflowData
+          properties:
+            workflowData:
+              type: object
+              required:
+                - name
+                - nodes
+                - connections
+              properties:
+                id:
+                  type: string
+                  description: Optional workflow ID
+                name:
+                  type: string
+                  description: Workflow name
+                nodes:
+                  type: array
+                  items:
+                    type: object
+                  description: Array of workflow nodes
+                connections:
+                  type: object
+                  description: Node connections configuration
+                active:
+                  type: boolean
+                  description: Whether the workflow is active
+                settings:
+                  type: object
+                  description: Workflow settings
+                staticData:
+                  type: object
+                  description: Static data for the workflow
+                pinData:
+                  type: object
+                  description: Pinned data for nodes
+                meta:
+                  type: object
+                  description: Workflow metadata
+                versionId:
+                  type: string
+                  description: Workflow version ID
+                triggerCount:
+                  type: number
+                  description: Number of triggers
+                updatedAt:
+                  type: string
+                  format: date-time
+                  description: Last update timestamp
+                createdAt:
+                  type: string
+                  format: date-time
+                  description: Creation timestamp
+            destinationNode:
+              type: string
+              description: Optional destination node to execute to
+            startNodes:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Node name
+                  sourceData:
+                    type: object
+                    description: Source data for the node
+              description: Optional start nodes configuration
+            runData:
+              type: object
+              description: Optional run data for partial execution
+            pinData:
+              type: object
+              description: Optional pin data for nodes
+            triggerToStartFrom:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Trigger node name
+                data:
+                  type: object
+                  description: Trigger data
+              description: Optional trigger configuration
+            agentRequest:
+              type: object
+              properties:
+                query:
+                  type: object
+                  description: Agent query data
+                tool:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: Tool name
+                  description: Agent tool configuration
+              description: Optional AI agent request
+    required: true
+  responses:
+    '200':
+      description: Workflow executed successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [success, waiting_for_webhook]
+                description: Execution status
+              executionId:
+                type: string
+                description: Execution ID
+              message:
+                type: string
+                description: Status message
+    '400':
+      description: Bad request - invalid workflow configuration
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [error]
+              message:
+                type: string
+              errors:
+                type: array
+                items:
+                  type: object
+    '401':
+      $ref: '../../../../shared/spec/responses/unauthorized.yml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [error]
+              message:
+                type: string

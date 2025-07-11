@@ -85,6 +85,45 @@ export declare namespace WorkflowRequest {
 	type GetTags = Get;
 	type UpdateTags = AuthenticatedRequest<{ id: string }, {}, TagEntity[]>;
 	type Transfer = AuthenticatedRequest<{ id: string }, {}, { destinationProjectId: string }>;
+	type ExecuteWorkflow = AuthenticatedRequest<
+		{},
+		{},
+		{
+			workflowData: {
+				id?: string;
+				name: string;
+				nodes: any[];
+				connections: Record<string, any>;
+				active?: boolean;
+				settings?: Record<string, any>;
+				staticData?: Record<string, any>;
+				pinData?: Record<string, any>;
+				meta?: Record<string, any>;
+				versionId?: string;
+				triggerCount?: number;
+				updatedAt?: Date;
+				createdAt?: Date;
+			};
+			destinationNode?: string;
+			startNodes?: Array<{
+				name: string;
+				sourceData?: any;
+			}>;
+			runData?: Record<string, any>;
+			pinData?: Record<string, any>;
+			triggerToStartFrom?: {
+				name: string;
+				data?: any;
+			};
+			agentRequest?: {
+				query: Record<string, any>;
+				tool: {
+					name: string;
+				};
+			};
+		},
+		{}
+	>;
 }
 
 export declare namespace UserRequest {
